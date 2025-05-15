@@ -9,6 +9,11 @@
    fecha creacion: {{ publicacion.fecha_creacion }}
 </p>
 
+{% if publicacion.usuario == user %}
+  <a href="{% url 'editar_publicacion' pk=publicacion.pk %}">Editar</a>
+  <a href="{% url 'eliminar_publicacion' pk=publicacion.pk %}">Eliminar</a>
+{% endif %}
+
 <h3>Comentarios</h3>
 <ol>
 {% for comentario in comentarios %}
