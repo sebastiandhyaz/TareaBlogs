@@ -1,3 +1,4 @@
+# Vista para editar comentario
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
@@ -5,6 +6,22 @@ from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.middleware.csrf import CsrfViewMiddleware
 from .models import Publicacion, Comentario
 from .forms import PublicacionForm, ComentarioForm
+
+@login_required
+@csrf_protect
+def editar_comentario(request, pk):
+    comentario = get_object_or_404(Comentario, pk=pk)
+    if request.user != comentario.usuario:
+        return HttpResponseForbidden("no puedes editar este comentario")
+
+    if request.method == 'POST':
+        form = ComentarioForm(request.POST, instance=comentario)
+        if form.is_valid():
+            form.save()
+            return redirect('detalle_publicacion', pk=comentario.publicacion.pk)
+    else:
+        form = ComentarioForm(instance=comentario)
+    return render(request, 'blog/editar_comentario.html', {'form': form})
 
 # Create your views here.
 def lista_publicaciones(request):
